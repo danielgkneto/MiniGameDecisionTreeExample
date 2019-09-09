@@ -10,7 +10,7 @@ public class Main {
 
     public static void main(String[] args){
 
-        nodes.add(new Node(0, "start", "\nWELCOME TO DANIEL'S TINY ADVENTURE!\n\nYou are in a creepy house!  Where would you like to go? ", -1, 0, false));
+        nodes.add(new Node(0, "start", "\nYou are in a creepy house!  Where would you like to go? ", -1, 0, false));
 
         nodes.add(new Node(1, "kitchen", "\nYou are in the kitchen. Do you want to open the refrigerator or open the cabinet? ", 0, 1, false));
         nodes.add(new Node(2, "upstairs", "\nYou are upstairs. Where do you want to go now? ", 0, 1, false));
@@ -61,6 +61,7 @@ public class Main {
 
 
         currentNode = nodes.get(0);
+        System.out.println("\nWELCOME TO DANIEL'S TINY ADVENTURE!\n");
 
         while (!isGameOver) currentNode = checkAnswer(currentNode);
 
@@ -70,6 +71,7 @@ public class Main {
     private static Node checkAnswer(Node currentNode){
         boolean isValidAnswer = false;
         String options = "";
+
         if (!currentNode.getIsLeaf()){
             options = "( ";
             for (Node node : nodes){
@@ -77,7 +79,11 @@ public class Main {
                     options = options.concat(node.getName() + " / ");
                 }
             }
-            options = options.substring(0, (options.length() - 2)).concat(" )");
+
+            if (currentNode == nodes.get(0))
+                options = options.substring(0, (options.length() - 2)).concat(" )");
+            else
+                options = options.substring(0, (options.length() - 2)).concat(" / back )");
         }
 
         System.out.println(currentNode.getMessage() + options);
@@ -89,6 +95,12 @@ public class Main {
 
         while (!isValidAnswer){
             answer = kb.nextLine();
+
+            if (answer.equals("back")){
+                for (Node node : nodes)
+                    if (currentNode.getFatherNode() == node.getId())
+                        return node;
+            }
 
             for (Node node : nodes){
                 if (node.getFatherNode() == currentNode.getId()){
